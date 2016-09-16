@@ -24,8 +24,11 @@
 	https://github.com/sandeepmistry/esp8266-Arduino/blob/master/esp8266com/esp8266/libraries/ESP8266WebServer/src/ESP8266WebServer.cpp
 */
 
-
-#include <Adafruit_NeoPixel.h>
+/*
+187
+296
+345
+*/
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPClient.h>
@@ -33,9 +36,14 @@
 #include <ArduinoOTA.h>
 #include <Wire.h>
 #include <sx1509_library.h>
+#include <Adafruit_NeoPixel.h>
 
-const int pin_LED = 5;
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, pin_LED, NEO_GRB + NEO_KHZ800);
+//Not sure if these are needed, but the LED isn't working so might as well
+#ifdef __AVR__
+#include <avr/power.h>
+#endif
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, 5, NEO_GRB + NEO_KHZ800);
 
 
 sx1509Class sx1509(0x3E); // SX1509 I2C address
@@ -57,7 +65,8 @@ void setup() {
 	// Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
 	Serial.begin(57600);
 	digitalWrite(7, HIGH); // Set HIGH output to ESP blue light
-	setLEDColour(0,255,0); // Set GREEN output to LED
+	pixels.begin();
+	setLEDColour(0,100,0); // Set GREEN output to LED
 	Serial.println();
 
 	// Legacy code, motor initializer
