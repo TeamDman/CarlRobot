@@ -12,7 +12,7 @@
     </script>
 </head>
 <body>
-<p id="debug" style="text-align:center;">Vers 21</p>
+<p id="debug" style="text-align:center;">Update 9-16</p>
 <p Style="color:red;text-align:center;">CarlRobotics.com</p>
 <script>
         var options = {
@@ -68,12 +68,7 @@
         manager.on("added",function(evt,joystick) {
             joystick.on("move", function(a,b) {
                 var ang=Math.floor(b.angle.degree);
-                console.log(ang);
                 var force = Math.floor(b.force*10);
-            //     if (isNear(ang,lastAng,10))
-         			// return;
-	         	lastAng=ang;
-	         	lastForce=force;
 	         	var rtn;
                 switch (Math.floor(ang/45)) {
                 	case 0:
@@ -87,15 +82,15 @@
                 		rtn=getPins(62,100);
 						break;
 					case 4:
-						rtn=getPins(-62,-100);
+						rtn=getPins(-100,-62);
 						break;
 					case 5:
 					case 6:
 						rtn=getPins(-100,-100);
 						break;
 					case 7:
-						rtn=getPins(-100,-62);
-
+						rtn=getPins(-62,-100);
+						break;
                 }
                 sendInfo(rtn);
             });

@@ -27,8 +27,10 @@
 
 #include <Adafruit_NeoPixel.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
+#include <ArduinoOTA.h>
 #include <Wire.h>
 #include <sx1509_library.h>
 
@@ -55,7 +57,7 @@ void setup() {
 	// Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
 	Serial.begin(57600);
 	digitalWrite(7, HIGH); // Set HIGH output to ESP blue light
-	setLEDColour(0,255,120); // Set GREEN output to LED
+	setLEDColour(0,255,0); // Set GREEN output to LED
 	Serial.println();
 
 	// Legacy code, motor initializer
@@ -91,6 +93,11 @@ void setup() {
 			Serial.println(esp_SSID);
 			delay(1000);
 		}
+		while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+			Serial.println("Connection Failed! Rebooting...");
+			delay(5000);
+			ESP.restart();
+		}
 	}
 	// if (true) { // I don't want these variables floating around .-.
 	// 	IPAddress ip(192,168,0,124);
@@ -118,25 +125,7 @@ void setup() {
 	Serial.print("\tSOFTAP\t");
 	Serial.println(WiFi.softAPIP());
 
-	byte mac[6];  
-	if (esp_HOTSPOT == true) {
-		WiFi.softAPmacAddress(mac);
-	} else {
-		WiFi.macAddress(mac);
-	}
-	
-	Serial.print("MAC address: ");
-	Serial.print(mac[5],HEX);
-	Serial.print(":");
-	Serial.print(mac[4],HEX);
-	Serial.print(":");
-	Serial.print(mac[3],HEX);
-	Serial.print(":");
-	Serial.print(mac[2],HEX);
-	Serial.print(":");
-	Serial.print(mac[1],HEX);
-	Serial.print(":");
-	Serial.println(mac[0],HEX);
+	ArduinoOTA.begin();
 
 	// tone(13, 500, 250);
 	// delay(250);
@@ -151,33 +140,23 @@ void setup() {
 
 void loop() {
 	server.handleClient();
+	ArduinoOTA.handle();
 }
 
 void robot_Move() { 
 	Serial.println("Robot: INPUT DATA");
-	String dir=server.arg("Dir").c_str();
 	int apina=atoi(server.arg("ApinA").c_str());
   	int apinb=atoi(server.arg("ApinB").c_str());
 	int bpina=atoi(server.arg("BpinA").c_str());
   	int bpinb=atoi(server.arg("BpinB").c_str());
-  	Serial.println(dir);
   	Serial.println(apina);
   	Serial.println(apinb);
   	Serial.println(bpina);
   	Serial.println(bpinb);
   	Serial.println("\n");
-
-  	if (dir=="") {
-  		Serial.println("No direction given, using pin inputs");
-  	}
 	motor_SetOutputs(apina,apinb,bpina,bpinb);
 	server_SendGood();
 }
-
-void motor_Switch(String dir) {
-
-}
-
 
 void motor_SetOutputs(int apina, int apinb, int bpina, int bpinb) { 
  	sx1509.pwm(motor_APinA, apina);
@@ -187,8 +166,10 @@ void motor_SetOutputs(int apina, int apinb, int bpina, int bpinb) {
 }
 
 void setLEDColour(int r, int g, int b) {
-	pixels.setPixelColor(0, pixels.Color(r % 255, g % 255, b % 255));
-	pixels.show(); // sends updated pixel to hardware
+	for (int i = 0; i < 1; i++) { // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    	pixels.setPixelColor(i, pixels.Color(r % 255, g % 255, b % 255));
+    	pixels.show(); // sends updated pixel to hardware
+  	}
 }
 
 void server_SendGood() {
@@ -197,7 +178,7 @@ void server_SendGood() {
 
 void server_HandleRoot(){
 	Serial.println("Handling Root");
-	server.send(200,"text/html","<h1>Hello World!</h1>");
+	server.send(200,"text/html","<h1>Update 9-16</h1>");
 }
 
 void server_HandleNotFound() {
