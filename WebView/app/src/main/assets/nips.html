@@ -12,7 +12,7 @@
     </script>
 </head>
 <body>
-<p id="debug" style="text-align:center;">Update 9-16</p>
+<p id="debug" style="text-align:center;">Update 9-20</p>
 <p Style="color:red;text-align:center;">CarlRobotics.com</p>
 <script>
         var options = {
@@ -24,14 +24,18 @@
         var lastAng = 0;
         var	lastForce = 0;
         var lastSent = "";
-        function sendInfo(args) {
-        	if (args==lastSent)
+        var floodProc = 0;
+        var date= new Date();
+        function sendInfo(args,override) {
+        	if (args==lastSent || !override && date.getTime()-floodProc<500)
         		return;
         	console.log("Sending " + args);
         	lastSent=args;
-           	$.ajax({url:"http://10.61.10.147/move" + args,
+        	floodProc=date.getTime();
+           	$.ajax({url:"http://10.61.10.147" + args,
                	success: function(result){
                	    console.log(result);
+               	    floodProc=0;
                	},
            	});
         }
@@ -41,28 +45,28 @@
         }
 
         function getPins(m1, m2) {
-        	var APinA, APinB, BPinA, BPinB;
+        	var apina, apinb, bpina, bpinb;
         	if (m1 == 0 && m2 == 0)
-        		return "?ApinA=0&ApinB=0&BpinA=0&BpinB=0";
+        		return "?apina=0&apinb=0&bpina=0&bpinb=0";
         	if (m1 < 0) {
-				APinB = 0
-				APinA = Math.floor(255 * Math.abs(m1) / 100) + 0
+				apinb = 0
+				apina = Math.floor(255 * Math.abs(m1) / 100) + 0
 			}
 			else
 			{
-				APinA = 0
-				APinB = Math.floor(255 * m1 / 100) + 0
+				apina = 0
+				apinb = Math.floor(255 * m1 / 100) + 0
 			}
 			if (m2 < 0) {
-				BPinB = 0
-				BPinA = Math.floor(255 * Math.abs(m2) / 100)  + 0
+				bpinb = 0
+				bpina = Math.floor(255 * Math.abs(m2) / 100)  + 0
 			}
 			else
 			{
-				BPinA = 0
-				BPinB = Math.floor(255 * m2 / 100) + 0
+				bpina = 0
+				bpinb = Math.floor(255 * m2 / 100) + 0
 			}
-			return "?ApinA=" + APinA + "&ApinB=" + APinB + "&BpinA=" + BPinA + "&BpinB=" + BPinB;
+			return "?apina=" + apina + "&apinb=" + apinb + "&bpina=" + bpina + "&bpinb=" + bpinb;
 		}
 
         manager.on("added",function(evt,joystick) {
@@ -97,7 +101,7 @@
             joystick.on("end", function() {
                 lastAng=-360;
                 lastSent="";
-                sendInfo(getPins(0,0));
+                sendInfo(getPins(0,0),true);
             });
         });
     </script>

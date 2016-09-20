@@ -29,6 +29,10 @@
 296
 345
 */
+
+//Tone values above 13900 sometimes generate low tones
+
+
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPClient.h>
@@ -62,8 +66,7 @@ const bool 	esp_HOTSPOT = false; // Enable to connect to an existing network, se
 ESP8266WebServer server(80); // Start webserver
 
 void setup() {
-	// Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
-	Serial.begin(57600);
+	Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
 	digitalWrite(7, HIGH); // Set HIGH output to ESP blue light
 	pixels.begin();
 	setLEDColour(0,100,0); // Set GREEN output to LED
@@ -116,8 +119,6 @@ void setup() {
 	// }
 
 	server.on("/",server_HandleRoot);
-	server.on("/index.html",server_HandleRoot);
-	server.on("/move", robot_Move);
 	server.onNotFound(server_HandleNotFound);
 	server.begin();
 
@@ -136,35 +137,19 @@ void setup() {
 
 	ArduinoOTA.begin();
 
-	// tone(13, 500, 250);
-	// delay(250);
-	// tone(13, 900, 250);
-	// delay(250);
-	// tone(13, 1200, 250);
-	// delay(250);
-	// tone(13,0,0);
-	
-	digitalWrite(7, LOW); // Disable the ESP blue light, finished setup
+	tone(13, 500,250);
+	delay(250);
+	noTone(13);
+	tone(13, 500,250);
+	delay(250);
+	noTone(13);
+	setLEDColour(0,0,125);
+	// digitalWrite(7, LOW); // Disable the ESP blue light, finished setup
 }
 
 void loop() {
 	server.handleClient();
 	ArduinoOTA.handle();
-}
-
-void robot_Move() { 
-	Serial.println("Robot: INPUT DATA");
-	int apina=atoi(server.arg("ApinA").c_str());
-  	int apinb=atoi(server.arg("ApinB").c_str());
-	int bpina=atoi(server.arg("BpinA").c_str());
-  	int bpinb=atoi(server.arg("BpinB").c_str());
-  	Serial.println(apina);
-  	Serial.println(apinb);
-  	Serial.println(bpina);
-  	Serial.println(bpinb);
-  	Serial.println("\n");
-	motor_SetOutputs(apina,apinb,bpina,bpinb);
-	server_SendGood();
 }
 
 void motor_SetOutputs(int apina, int apinb, int bpina, int bpinb) { 
@@ -176,7 +161,7 @@ void motor_SetOutputs(int apina, int apinb, int bpina, int bpinb) {
 
 void setLEDColour(int r, int g, int b) {
 	for (int i = 0; i < 1; i++) { // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    	pixels.setPixelColor(i, pixels.Color(r % 255, g % 255, b % 255));
+    	pixels.setPixelColor(i, pixels.Color(r, g, b));
     	pixels.show(); // sends updated pixel to hardware
   	}
 }
@@ -185,9 +170,43 @@ void server_SendGood() {
 	server.send (200, "text/html", "recieved");
 }
 
+int getArg(String arg) {
+	return atoi(server.arg(arg).c_str());
+}
+
 void server_HandleRoot(){
-	Serial.println("Handling Root");
-	server.send(200,"text/html","<h1>Update 9-16</h1>");
+	Serial.println("Handling Root\n");
+	int apina=getArg("apina");
+  	int apinb=getArg("apinb");
+	int bpina=getArg("bpina");
+  	int bpinb=getArg("bpinb");
+  	int r=getArg("r");
+  	int g=getArg("g");
+  	int b=getArg("b");
+  	int freq=getArg("freq");
+  	int duration=getArg("dur");
+  	int restart=getArg("restart");
+  	if (freq==0) {
+  		noTone(13);
+  	} else {	
+	  	tone(13,freq,duration);
+	  	delay(duration);
+	  	noTone(13);
+  	}
+ 
+
+	motor_SetOutputs(apina,apinb,bpina,bpinb);
+	setLEDColour(r,g,b);
+	
+	String response = "<h1>Update 9-16</h1><h2>Arguments:</h2><p>";
+	for (uint8_t i=0; i<server.args(); i++)
+		response+="\t"+server.argName(i)+":\t"+server.arg(i)+"\n";
+	Serial.println(response);
+	response+="</p>";
+	server.send(200,"text/html",response);
+	if (restart==1) {
+		tone(13,0,500); // Crash esp for restart
+	}
 }
 
 void server_HandleNotFound() {
