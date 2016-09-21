@@ -90,18 +90,18 @@
 						break;
 					case 5:
 					case 6:
-						rtn=getPins(-100,-100);
+						rtn=getPins(-100,-100)+"&freq=500";
 						break;
 					case 7:
 						rtn=getPins(-62,-100);
 						break;
                 }
-                sendInfo(rtn);
+                sendInfo(rtn+"&r=255&g=165");
             });
             joystick.on("end", function() {
                 lastAng=-360;
                 lastSent="";
-                sendInfo(getPins(0,0),true);
+                sendInfo(getPins(0,0)+"&b=255",true);
             });
         });
     </script>

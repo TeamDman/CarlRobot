@@ -55,6 +55,7 @@ const int motor_APinA = 0;
 const int motor_APinB = 1;
 const int motor_BPinA = 2;
 const int motor_BPinB = 3;
+const int tone_Pin=13;
 // NOTE: Motor max output 255
 
 const char* esp_SSID = "Harambe";
@@ -69,7 +70,7 @@ void setup() {
 	Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
 	digitalWrite(7, HIGH); // Set HIGH output to ESP blue light
 	pixels.begin();
-	setLEDColour(0,100,0); // Set GREEN output to LED
+	setLEDColour(100,0,0); // Set GREEN output to LED
 	Serial.println();
 
 	// Legacy code, motor initializer
@@ -143,7 +144,9 @@ void setup() {
 	tone(13, 500,250);
 	delay(250);
 	noTone(13);
-	setLEDColour(0,0,125);
+	setLEDColour(0,255,0);
+	delay(2000);
+	setLEDColour(0,0,255);
 	// digitalWrite(7, LOW); // Disable the ESP blue light, finished setup
 }
 
@@ -187,11 +190,13 @@ void server_HandleRoot(){
   	int duration=getArg("dur");
   	int restart=getArg("restart");
   	if (freq==0) {
-  		noTone(13);
+  		noTone(tone_Pin);
+  	} else if (duration!=0) {
+  		tone(tone_Pin,freq,duration);
+  		delay(duration);
+  		noTone(tone_Pin);
   	} else {	
-	  	tone(13,freq,duration);
-	  	delay(duration);
-	  	noTone(13);
+	  	tone(tone_Pin,freq,1000000);
   	}
  
 
@@ -205,7 +210,7 @@ void server_HandleRoot(){
 	response+="</p>";
 	server.send(200,"text/html",response);
 	if (restart==1) {
-		tone(13,0,500); // Crash esp for restart
+		tone(tone_Pin,0,500); // Crash esp for restart
 	}
 }
 
