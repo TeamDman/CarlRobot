@@ -12,8 +12,7 @@
     </script>
 </head>
 <body>
-<p id="debug" style="text-align:center;">Update 9-22</p>
-<p Style="color:red;text-align:center;">CarlRobotics.com</p>
+<p id="debug" style="text-align:center;">Drag anywhere to begin</p>
 <script>
         var options = {
             color: "black",
@@ -71,6 +70,7 @@
 
         manager.on("added",function(evt,joystick) {
             joystick.on("move", function(a,b) {
+            	document.getElementById("debug").style.display="none"
                 var ang=Math.floor(b.angle.degree);
                 var force = Math.floor(b.force*10);
 	         	var rtn;
