@@ -18,6 +18,6 @@ public class ControllerActivity extends Activity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
-        mWebView.loadUrl("file:///android_asset/joystick.html");
+        mWebView.loadUrl("file:///android_asset/joystic_static.html");
     }
 }
