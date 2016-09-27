@@ -28,6 +28,9 @@
 187
 296
 345
+
+
+EEPROM
 */
 
 //Tone values above 13900 sometimes generate low tones
@@ -70,7 +73,7 @@ void setup() {
 	Serial.begin(115200); // Begin serial, higher baud rate is less stable but faster
 	digitalWrite(7, HIGH); // Set HIGH output to ESP blue light
 	pixels.begin();
-	setLEDColour(100,0,0); // Set GREEN output to LED
+	setLEDColour(255,0,0);
 	Serial.println();
 
 	// Legacy code, motor initializer

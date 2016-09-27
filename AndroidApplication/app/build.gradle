@@ -5,6 +5,7 @@ android {
     buildToolsVersion "24.0.2"
 
     defaultConfig {
+        buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
         applicationId "ca.dominicphillips.carlapplication"
         minSdkVersion 19
         targetSdkVersion 24
