@@ -17,14 +17,15 @@
         var options = {
             color: "black",
             position: {top: '50%', left: '50%'},
-            mode: "dynamic",                  
+            mode: "static",                  
         };
-        var manager = nipplejs.create(options);
         var lastAng = 0;
         var	lastForce = 0;
         var lastSent = "";
         var floodProc = 0;
         var date= new Date();
+        var joystick;
+        createJoystick();
         function sendInfo(args,override) {
         	if (args==lastSent || !override && date.getTime()-floodProc<500)
         		return;
@@ -68,7 +69,7 @@
 			return "?apina=" + apina + "&apinb=" + apinb + "&bpina=" + bpina + "&bpinb=" + bpinb;
 		}
 
-        manager.on("added",function(evt,joystick) {
+		function bindJoystick() {
             joystick.on("move", function(a,b) {
             	document.getElementById("debug").style.display="none"
                 var ang=Math.floor(b.angle.degree);
@@ -103,7 +104,14 @@
                 lastSent="";
                 sendInfo(getPins(0,0)+"&b=255",true);
             });
-        });
+        }
+
+        function createJoystick() {
+			if (joystick)
+				joystick.destroy();
+			joystick=nipplejs.create(options);
+			bindJoystick();
+        }
     </script>
 </body>
 </html>
