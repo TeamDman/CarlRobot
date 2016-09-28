@@ -93,6 +93,7 @@ void setup() {
 		while(true)
 			Serial.println("WiFi shield not present");
 
+
 	if (esp_HOTSPOT) {
 		Serial.print("Wireless Access Point SSID: ");
 		Serial.println(esp_SSID);
@@ -123,7 +124,7 @@ void setup() {
 	// }
 
 	server.on("/",server_HandleRoot);
-	server.onNotFound(server_HandleNotFound);
+	server.onNotFound(server_HandleNotFound);	
 	server.begin();
 
 	Serial.print("Webserver active");

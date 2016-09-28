@@ -69,31 +69,49 @@
 			return "?apina=" + apina + "&apinb=" + apinb + "&bpina=" + bpina + "&bpinb=" + bpinb;
 		}
 
+		function setColor(color) {
+			$(".nipple *").css("background",color);
+		}
+
 		function bindJoystick() {
             joystick.on("move", function(a,b) {
             	document.getElementById("debug").style.display="none"
                 var ang=Math.floor(b.angle.degree);
                 var force = Math.floor(b.force*10);
 	         	var rtn;
-                switch (Math.floor(ang/45)) {
+                switch (Math.floor(ang/22.5)) {
                 	case 0:
-                		rtn=getPins(100,62);
-                		break;
                 	case 1:
                 	case 2:
+                		setColor("orange");
+                		rtn=getPins(100,62);
+                		break;
+                	case 3:
+                	case 4:
+                		setColor("green");
                 		rtn=getPins(100,100);
                 		break
-                	case 3:
+                	case 5:
+                	case 6:
+                	case 7:
+                		setColor("blue");
                 		rtn=getPins(62,100);
 						break;
-					case 4:
+					case 8:
+					case 9:
+					case 10:
+						setColor("purple");
 						rtn=getPins(-100,-62);
 						break;
-					case 5:
-					case 6:
+					case 11:
+					case 12:
+						setColor("brown");
 						rtn=getPins(-100,-100)+"&freq=500";
 						break;
-					case 7:
+					case 13:
+					case 14:
+					case 15:
+						setColor("teal");
 						rtn=getPins(-62,-100);
 						break;
                 }
