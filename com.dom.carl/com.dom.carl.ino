@@ -66,7 +66,9 @@ const char* esp_PASS = "ripperoni";
 const bool 	esp_HOTSPOT = false; // Enable to connect to an existing network, see below
 // You can have the ESP connect to your wifi network by replacing the OCSB and wireless4all found in the setup
 
-
+int robot_Mode=0; //1 = linefollowing, 0 = joystick
+byte lineSensorArray [5]; //sensor array
+unsigned long int loopIter=0;
 ESP8266WebServer server(80); // Start webserver
 
 void setup() {
@@ -155,8 +157,23 @@ void setup() {
 }
 
 void loop() {
+	loopIter++;
 	server.handleClient();
 	ArduinoOTA.handle();
+	if (robot_Mode==1) {
+		setLEDColour(loopIter%10==0?255:0,loopIter%10==5?255:0,0);
+		lineSensorArray[0] = sx1509.readPin(11);  // read line sensor 0 (s5), nearest power switch
+		lineSensorArray[1] = sx1509.readPin(12);  // read line sensor 1 (s4)
+		lineSensorArray[2] = sx1509.readPin(13);  // read line sensor 2 (s1)
+		lineSensorArray[3] = sx1509.readPin(14);  // read line sensor 3 (s3)
+		lineSensorArray[4] = sx1509.readPin(15);  // read line sensor 4 (s2), farest from power switch
+		motor_SetOutputs(
+			lineSensorArray[1]==1?255:0,
+			0,
+			lineSensorArray[3]==1?255:0,
+			0
+		);
+	}
 }
 
 void motor_SetOutputs(int apina, int apinb, int bpina, int bpinb) { 
@@ -193,6 +210,7 @@ void server_HandleRoot(){
   	int freq=getArg("freq");
   	int duration=getArg("dur");
   	int restart=getArg("restart");
+  	robot_Mode=getArg("mode");
   	if (freq==0) {
   		noTone(tone_Pin);
   	} else if (duration!=0) {
