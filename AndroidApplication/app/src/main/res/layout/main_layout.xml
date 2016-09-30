@@ -26,9 +26,9 @@
         android:text="Open Controller"
         android:onClick="showController"
         android:id="@+id/button_controller"
-        android:layout_above="@+id/button_actions"
-        android:layout_marginBottom="69dp"
-        android:nestedScrollingEnabled="true" />
+        android:nestedScrollingEnabled="true"
+        android:layout_below="@+id/text_warning"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -36,10 +36,9 @@
         android:text="Open Action Menu"
         android:onClick="showActions"
         android:id="@+id/button_actions"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="148dp"
-        android:nestedScrollingEnabled="true" />
+        android:nestedScrollingEnabled="true"
+        android:layout_below="@+id/button_controller"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,6 +56,30 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Update [loading]"
         android:id="@+id/text_update"
+        android:textAlignment="center"
+        android:layout_below="@+id/text_helper"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Make sure you are on the same network as the robot!"
+        android:id="@+id/text_warning"
+        android:textAlignment="center"
+        android:layout_below="@+id/text_update"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="100px" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Design 1st"
+        android:id="@+id/text_helper"
+        android:textSize="24dp"
+        android:textAlignment="center"
+        android:textColor="#ff0000"
+        android:autoLink="web"
         android:layout_below="@+id/text_greetings"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

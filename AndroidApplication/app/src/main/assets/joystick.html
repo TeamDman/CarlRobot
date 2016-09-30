@@ -38,6 +38,12 @@
                	    floodProc=0;
                	},
            	});
+           	$.ajax({url:"http://192.168.4.1" + args,
+               	success: function(result){
+               	    console.log(result);
+               	    floodProc=0;
+               	},
+           	});
         }
 
         function isNear(give,targ,close) {

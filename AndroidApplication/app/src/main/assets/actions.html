@@ -24,6 +24,10 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 	<input type="number" id="motor_left" min="0" max="100">
 	<input type="number" id="motor_right" min="0" max="100">
 	<br>
+
+	<p>Motor Mode [0=joystick,1=linefollow]</p>
+	<input type="number" id="motor_mode" min="0" max="1">
+	<br>
 	<button onclick="action_send()">Send</button>
 	<button onclick="action_restart()">RESTART</button>
 	<button onclick="action_clear()">CLEAR</button>
@@ -38,6 +42,11 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 					console.log(result);
 				},
 			});
+			$.ajax({url:"http://192.168.4.1" + args,
+               	success: function(result){
+               	    console.log(result);
+               	},
+           	});
 		}
 
 		function action_restart() {
@@ -52,7 +61,9 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 			document.getElementById("colour_b").value=0
 			document.getElementById("motor_left").value=0
 			document.getElementById("motor_right").value=0
+			document.getElementById("motor_mode").value=0
 		}
+		action_clear();
 
 		function action_send() {
 			sendInfo(
@@ -61,6 +72,7 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 				"&r="+document.getElementById("colour_r").value+
 				"&g="+document.getElementById("colour_g").value+
 				"&b="+document.getElementById("colour_b").value+
+				"&mode="+document.getElementById("motor_mode").value+
 				getPins(
 					document.getElementById("motor_left").value,
 					document.getElementById("motor_right").value
