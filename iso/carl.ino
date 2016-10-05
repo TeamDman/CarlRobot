@@ -67,7 +67,6 @@ const bool 	esp_HOTSPOT = true; // Enable to connect to an existing network, see
 // You can have the ESP connect to your wifi network by replacing the OCSB and wireless4all found in the setup
 
 int robot_Mode=0; //1 = linefollowing, 0 = joystick
-byte lineSensorArray [5]; //sensor array
 unsigned long int loopIter=0;
 ESP8266WebServer server(80); // Start webserver
 
@@ -166,6 +165,9 @@ void setup() {
 	// digitalWrite(7, LOW); // Disable the ESP blue light, finished setup
 }
 
+
+int pleft=0;
+int pright=0;
 void loop() {
 	loopIter++;
 	server.handleClient();
@@ -173,32 +175,32 @@ void loop() {
 	if (robot_Mode==1) {
 		setLEDColour(loopIter%10==0?255:0,loopIter%10==5?255:0,0);
 		sx1509.writePin(10,HIGH);
-		lineSensorArray[0] = sx1509.readPin(11);  // read line sensor 0 (s5), nearest power switch
-		lineSensorArray[1] = sx1509.readPin(12);  // read line sensor 1 (s4)
-		lineSensorArray[2] = sx1509.readPin(13);  // read line sensor 2 (s1)
-		lineSensorArray[3] = sx1509.readPin(14);  // read line sensor 3 (s3)
-		lineSensorArray[4] = sx1509.readPin(15);  // read line sensor 4 (s2), farest from power switch
-		Serial.print("\tlineSensorArray[0] = ");
-		Serial.print(lineSensorArray[0]);
-		Serial.print("\tlineSensorArray[1] = ");
-		Serial.print(lineSensorArray[1]);
-		Serial.print("\tlineSensorArray[2] = ");
-		Serial.print(lineSensorArray[2]);
-		Serial.print("\tlineSensorArray[3] = ");
-		Serial.print(lineSensorArray[3]);
-		Serial.print("\tlineSensorArray[4] = ");
-		Serial.println(lineSensorArray[4]);
-		if (lineSensorArray[1]==0&&lineSensorArray[3]==0) {
-			motor_SetOutputs(0,210,0,210);
-		} else {
-			motor_SetOutputs(
-				0,
-				//When ==1, right sensor on black (or on nothing)
-				lineSensorArray[1]==1?180:0,
-				0,
-				lineSensorArray[3]==1?180:0
-			);
+		int right = sx1509.readPin(12);  // read line sensor 1 (s4)
+		int left = sx1509.readPin(14);  // read line sensor 3 (s3)
+		int nleft=0;
+		int nright=0;
+		int aleft=0;
+		int aright=0;
+		if (left==0&&right==0) {
+			// aleft=255;
+			// aright=255;
+			aleft=pleft;
+			aright=pright;
+		} else if (left==1&&right==1) {
+			aright=pright;
+			pright=255;
+		} else if (left==0) {
+			aleft=255;
+			pleft=aleft;
+			pright=0;
+			// nleft=180;
+		} else if (right==0) {
+			aright=255;
+			pright=aright;
+			pleft=0;
+			// nright=180;
 		}
+		motor_SetOutputs(nleft,aleft,nright,aright );
 	}
 }
 
