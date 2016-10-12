@@ -61,7 +61,7 @@ const int motor_BPinB = 3;
 const int tone_Pin=13;
 // NOTE: Motor max output 255
 
-const char* esp_SSID = "CarlRobot";
+const char* esp_SSID = "CarlRobot Rho";
 const char* esp_PASS = "CarlRobot";
 const bool 	esp_HOTSPOT = true; // Enable to connect to an existing network, see below
 // You can have the ESP connect to your wifi network by replacing the OCSB and wireless4all found in the setup
