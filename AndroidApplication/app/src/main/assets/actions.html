@@ -24,13 +24,11 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 	<input type="number" id="motor_left" min="0" max="100">
 	<input type="number" id="motor_right" min="0" max="100">
 	<br>
-
-	<p>Motor Mode [0=joystick,1=linefollow]</p>
-	<input type="number" id="motor_mode" min="0" max="1">
 	<br>
 	<button onclick="action_send()">Send</button>
 	<button onclick="action_restart()">RESTART</button>
 	<button onclick="action_clear()">CLEAR</button>
+	<button onclick="action_follow()">LINEFOLLOW</button>
 	
 
 
@@ -78,6 +76,10 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 					document.getElementById("motor_right").value
 				)
 			);
+		}
+
+		function action_follow() {
+			sendInfo("?mode=1");
 		}
 
         function getPins(m1, m2) {

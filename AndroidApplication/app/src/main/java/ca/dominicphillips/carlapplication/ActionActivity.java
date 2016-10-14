@@ -1,6 +1,7 @@
 package ca.dominicphillips.carlapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,5 +20,11 @@ public class ActionActivity extends Activity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         mWebView.loadUrl("file:///android_asset/actions.html");
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,MainActivity.class));
+        finish();
     }
 }
