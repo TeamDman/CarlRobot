@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -35,18 +36,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
+
         manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         info = manager.getConnectionInfo();
         ((TextView) findViewById(R.id.text_update)).setText("Build " + new Date(BuildConfig.TIMESTAMP).toString().replaceAll("GMT\\+\\d+:\\d+", ""));
         updateTitle();
 
     }
-
-//    @Override
-//    protected void onResume() {
-//        updateTitle();
-//        super.onResume();
-//    }
 
     public void showController(View view) {
         startActivity(new Intent(this, ControllerActivity.class));
