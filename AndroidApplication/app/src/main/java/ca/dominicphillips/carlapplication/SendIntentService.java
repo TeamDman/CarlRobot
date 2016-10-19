@@ -30,6 +30,7 @@ public class SendIntentService extends IntentService {
         try {
             try {
                 URL url = new URL("http://192.168.4.1/" + intent.getStringExtra("url"));
+                System.out.println(".\n.\nSENDING\n"+url.toString()+"\n.\n.");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
                     in = new BufferedInputStream(urlConnection.getInputStream());

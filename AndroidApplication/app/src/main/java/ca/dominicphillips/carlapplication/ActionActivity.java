@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,20 +16,14 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by s401321 on 26/09/2016.
  */
 public class ActionActivity extends Activity {
-    private WebView mWebView;
-    private TextView t_t_freq;
-    private TextView t_t_dur;
-    private TextView t_m_left;
-    private TextView t_m_right;
-    private TextView t_c_r;
-    private TextView t_c_g;
-    private TextView t_c_b;
+
     private SeekBar s_t_freq;
     private SeekBar s_t_dur;
     private SeekBar s_m_left;
@@ -35,24 +31,15 @@ public class ActionActivity extends Activity {
     private SeekBar s_c_r;
     private SeekBar s_c_g;
     private SeekBar s_c_b;
+    private CheckBox c_line;
+
     HashMap<SeekBar, String> seekPairs = new HashMap<>();
+    ArrayList<SeekBar> seekBars = new ArrayList<SeekBar>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.action_layout);
-//        mWebView= (WebView) findViewById(R.id.webview_actions);
-//        WebSettings webSettings = mWebView.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-//        webSettings.setAllowUniversalAccessFromFileURLs(true);
-//        mWebView.loadUrl("file:///android_asset/actions.html");
-        t_t_freq = (TextView) findViewById(R.id.text_tone_freq);
-        t_t_dur = (TextView) findViewById(R.id.text_tone_dur);
-        t_m_left = (TextView) findViewById(R.id.text_motor_left);
-        t_m_right = (TextView) findViewById(R.id.text_motor_right);
-        t_c_r = (TextView) findViewById(R.id.text_color_r);
-        t_c_g = (TextView) findViewById(R.id.text_color_g);
-        t_c_b = (TextView) findViewById(R.id.text_color_b);
 
         s_t_freq = (SeekBar) findViewById(R.id.seek_tone_freq);
         s_t_dur = (SeekBar) findViewById(R.id.seek_tone_dur);
@@ -61,27 +48,44 @@ public class ActionActivity extends Activity {
         s_c_r = (SeekBar) findViewById(R.id.seek_color_r);
         s_c_g = (SeekBar) findViewById(R.id.seek_color_g);
         s_c_b = (SeekBar) findViewById(R.id.seek_color_b);
+        c_line = (CheckBox) findViewById(R.id.check_line);
 
         seekPairs.put(s_t_freq, "freq");
         seekPairs.put(s_t_dur, "dur");
-//        seekPairs.put(s_m_left ,"");
-//        seekPairs.put(s_m_right ,"");
         seekPairs.put(s_c_r, "r");
         seekPairs.put(s_c_g, "g");
         seekPairs.put(s_c_b, "b");
         resetSliders(null);
+        for (SeekBar bar : seekPairs.keySet())
+            seekBars.add(bar);
+        seekBars.add(s_m_left);
+        seekBars.add(s_m_right);
+
+        System.out.println(seekBars);
+        System.out.println(findViewById(R.id.check_line));
+
+       c_line.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for (SeekBar bar : seekBars)
+                    bar.setIndeterminate(isChecked);
+            }
+        });
     }
 
     public void sendInfo(View view) {
         StringBuilder send = new StringBuilder("?");
         int left = s_m_left.getProgress();
         int right = s_m_right.getProgress();
-        send.append("apina=" + (left >= 255 ? 0 : left));
+        send.append("apina=" + (left >= 255 ? 0 : 255-left));
         send.append("&apinb=" + (left <= 255 ? 0 : left - 255));
-        send.append("&bpina=" + (right >= 255 ? 0 : right));
+        send.append("&bpina=" + (right >= 255 ? 0 : 255-right));
         send.append("&bpinb=" + (right <= 255 ? 0 : right - 255));
+        send.append("&mode="+(c_line.isChecked()?"1":"0"));
         for (SeekBar index : seekPairs.keySet())
             send.append("&" + seekPairs.get(index) + "=" + ((SeekBar) index).getProgress());
+
+
 
         System.out.println(send);
         PendingIntent pendingResult = createPendingResult(0, new Intent(), 0);
