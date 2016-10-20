@@ -1,5 +1,6 @@
 package ca.dominicphillips.carlapplication;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.List;
@@ -26,11 +28,23 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     WifiManager manager;
     WifiInfo info;
+    BroadcastReceiver receiver;
 
     @Override
     public void onBackPressed() {
         finishAffinity();
     }
+
+//    @Override
+//    protected void onStop() {
+//        try {
+//            unregisterReceiver(receiver);
+//            receiver=null;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        super.onStop();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +52,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_layout);
 
         manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        info = manager.getConnectionInfo();
         ((TextView) findViewById(R.id.text_update)).setText("Build " + new Date(BuildConfig.TIMESTAMP).toString().replaceAll("GMT\\+\\d+:\\d+", ""));
         updateTitle();
 
+        registerReceiver(receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateTitle();
+                String ssid = manager.getConnectionInfo().getSSID();
+                if (!(ssid.contains("unknown") || ssid.contains("0x")))
+                Toast.makeText(getApplicationContext(), "Connected to " + ssid, Toast.LENGTH_SHORT).show();
+            }
+        }, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
     }
 
     public void showController(View view) {
@@ -53,13 +75,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showRobotList(View view) {
-        Intent intent = new Intent(this, RobotListActivity.class);
-//        intent.putExtra("title",)
-        startActivity(intent);
+        startActivity(new Intent(this, RobotListActivity.class));
+    }
+
+    public void restartRobot(View view) {
+        PendingIntent pendingResult = createPendingResult(0, new Intent(), 0);
+        Intent intent = new Intent(getApplicationContext(), SendIntentService.class);
+        intent.putExtra("url", "?restart=1");
+        intent.putExtra("pending_result", pendingResult);
+        startService(intent);
     }
 
     public void updateTitle() {
-        getSupportActionBar().setTitle("Connected to " + info.getSSID());
+        getSupportActionBar().setTitle("Connected to " + manager.getConnectionInfo().getSSID());
     }
 
 }

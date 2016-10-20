@@ -95,12 +95,6 @@ public class ActionActivity extends Activity {
         startService(intent);
     }
 
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
-    }
-
     public void resetSliders(View view) {
         s_t_freq.setProgress(0);
         s_t_dur.setProgress(0);

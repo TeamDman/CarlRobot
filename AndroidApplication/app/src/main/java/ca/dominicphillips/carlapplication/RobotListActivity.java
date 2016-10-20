@@ -37,12 +37,6 @@ public class RobotListActivity extends Activity {
     ArrayList<String> list;
 
     @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this,MainActivity.class));
-        finish();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.robotlist_layout);
@@ -52,21 +46,6 @@ public class RobotListActivity extends Activity {
         listView = (ListView) findViewById(R.id.list_robots);
         list = new ArrayList<String>();
 
-        final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context c, Intent intent) {
-                if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-                    List<ScanResult> results = manager.getScanResults();
-                    list.clear();
-                    for (ScanResult res : results) {
-                        if (res.SSID.contains("Carl"))
-                        list.add(res.SSID);
-                    }
-                    adapter.notifyDataSetChanged();
-                    // add your logic here
-                }
-            }
-        };
 
         registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         new Timer().schedule(new TimerTask() {
@@ -81,7 +60,7 @@ public class RobotListActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(view.getContext() ,"Connecting to " +  adapter.getItem(position-1).toString()  , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext() ,"Connecting to " +  adapter.getItem(position-1).toString()  , Toast.LENGTH_SHORT).show();
                 WifiConfiguration conf = new WifiConfiguration();
                 conf.SSID = "\"" + adapter.getItem(position-1).toString() + "\"";
                 conf.preSharedKey = "\"CarlRobot\"";
@@ -89,8 +68,6 @@ public class RobotListActivity extends Activity {
                 manager.disconnect();
                 manager.enableNetwork(netID,true);
                 manager.reconnect();
-                setResult(1);
-                startActivity(new Intent(view.getContext(),MainActivity.class));
                 finish();
             }
         });
@@ -100,7 +77,27 @@ public class RobotListActivity extends Activity {
         header.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         header.setTextColor(Color.RED);
         listView.addHeaderView(header);
-
-
     }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(mWifiScanReceiver);
+        super.onStop();
+    }
+
+    final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+                List<ScanResult> results = manager.getScanResults();
+                list.clear();
+                for (ScanResult res : results) {
+                    if (res.SSID.contains("Carl"))
+                        list.add(res.SSID);
+                }
+                adapter.notifyDataSetChanged();
+                // add your logic here
+            }
+        }
+    };
 }

@@ -1,228 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnOrderPreserved="true">
-    <!--<WebView-->
-        <!--android:id="@+id/webview_actions"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Tone Freq"
-        android:id="@+id/text_tone_freq"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/text_tone_dur" />
+        android:id="@+id/textView" />
 
-    <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
-        android:minHeight="6dip"
-        android:maxHeight="6dip"
-        android:layout_height="wrap_content"
-        android:max="4000"
-        android:id="@+id/seek_tone_freq"
-        android:layout_below="@+id/text_tone_freq"
-        android:layout_alignParentStart="true"
-        android:indeterminate="false"
-        android:progress="0" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Color R"
-        android:id="@+id/text_color_r"
-        android:layout_below="@+id/seek_tone_dur"
-        android:layout_alignStart="@+id/text_tone_dur" />
-
-    <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
-        android:minHeight="6dip"
-        android:maxHeight="6dip"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:progress="0"
-        android:id="@+id/seek_color_r"
-        android:layout_below="@+id/text_color_r"
-        android:layout_alignParentStart="true"
-        android:indeterminate="false" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Color G"
-        android:id="@+id/text_color_g"
-        android:layout_below="@+id/seek_color_r"
-        android:layout_alignStart="@+id/text_color_r" />
-
-    <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
-        android:minHeight="6dip"
-        android:maxHeight="6dip"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:progress="0"
-        android:id="@+id/seek_color_g"
-        android:layout_below="@+id/text_color_g"
-        android:layout_alignParentStart="true"
-        android:indeterminate="false" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Color B"
-        android:id="@+id/text_color_b"
-        android:layout_below="@+id/seek_color_g"
-        android:layout_alignStart="@+id/text_color_g" />
-
-    <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
-        android:minHeight="6dip"
-        android:maxHeight="6dip"
-        android:layout_height="wrap_content"
-        android:max="255"
-        android:progress="0"
-        android:id="@+id/seek_color_b"
-        android:layout_below="@+id/text_color_b"
-        android:layout_alignParentStart="true"
-        android:indeterminate="false" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/button_send"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="sendInfo" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Tone Duration"
-        android:id="@+id/text_tone_dur"
-        android:layout_below="@+id/seek_tone_freq"
-        android:layout_toStartOf="@+id/button_send" />
-
-    <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
-        android:minHeight="6dip"
-        android:maxHeight="6dip"
-        android:layout_height="wrap_content"
-        android:max="4000"
-        android:id="@+id/seek_tone_dur"
-        android:indeterminate="false"
-        android:progress="0"
-        android:layout_below="@+id/text_tone_dur"
-        android:layout_alignParentStart="true" />
-
-    <LinearLayout
-        android:orientation="horizontal"
+    <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/seek_color_b"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="43dp"
-        android:id="@+id/linearLayout">
+        android:id="@+id/seek_tone_freq"
+        android:max="5000"
+        android:indeterminate="false" />
 
-        <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:paddingTop="10px"
-            android:paddingBottom="10px"
-            android:paddingLeft="30px"
-            android:paddingRight="30px"
-            android:minHeight="6dip"
-            android:maxHeight="6dip"
-            android:layout_height="wrap_content"
-            android:max="510"
-            android:progress="255"
-            android:id="@+id/seek_motor_left"
-            android:indeterminate="false"
-            android:layout_below="@+id/linearLayout"
-            android:layout_alignEnd="@+id/text_tone_dur"
-            android:layout_weight="1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Tone Duration"
+        android:id="@+id/textView2" />
 
-        <SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:paddingTop="10px"
-            android:paddingBottom="10px"
-            android:paddingLeft="30px"
-            android:paddingRight="30px"
-            android:minHeight="6dip"
-            android:maxHeight="6dip"
-            android:layout_height="wrap_content"
-            android:max="510"
-            android:progress="255"
-            android:id="@+id/seek_motor_right"
-            android:indeterminate="false"
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seek_tone_dur"
+        android:max="10000"
+        android:indeterminate="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Color [R G B]"
+        android:id="@+id/textView3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/seek_color_r"
             android:layout_weight="1"
-            android:layout_below="@+id/linearLayout"
-            android:layout_toEndOf="@+id/seek_motor_left"
-            android:layout_marginStart="15dp" />
+            android:max="255"
+            android:indeterminate="false" />
 
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/seek_color_g"
+            android:layout_weight="1"
+            android:max="255"
+            android:indeterminate="false" />
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/seek_color_b"
+            android:layout_weight="1"
+            android:max="255"
+            android:indeterminate="false" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Left Motor"
-        android:id="@+id/text_motor_left"
-        android:layout_below="@+id/seek_color_b"
-        android:layout_alignStart="@+id/text_color_b" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Motor [Left Right]"
+        android:id="@+id/textView4" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Right Motor"
-        android:id="@+id/text_motor_right"
-        android:layout_alignTop="@+id/text_motor_left"
-        android:layout_toEndOf="@+id/button_send" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:id="@+id/button_reset"
-        android:onClick="resetSliders"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/text_tone_dur" />
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seek_motor_left"
+            android:layout_weight="1"
+            android:indeterminate="false"
+            android:max="510"
+            android:progress="255" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seek_motor_right"
+            android:layout_weight="1"
+            android:indeterminate="false"
+            android:max="510"
+            android:progress="255" />
+    </LinearLayout>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Line Following"
+        android:text="Line following"
         android:id="@+id/check_line"
-        android:checked="false"
-        android:layout_alignBaseline="@+id/button_send"
-        android:layout_alignBottom="@+id/button_send"
-        android:layout_toEndOf="@+id/button_send" />
+        android:checked="false" />
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:id="@+id/button_reset"
+            android:onClick="resetSliders"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:id="@+id/button_send"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:onClick="sendInfo" />
+    </RelativeLayout>
+
+</LinearLayout>
