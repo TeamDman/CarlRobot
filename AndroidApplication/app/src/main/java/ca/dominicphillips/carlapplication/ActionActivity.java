@@ -93,6 +93,7 @@ public class ActionActivity extends Activity {
         intent.putExtra("url", send.toString());
         intent.putExtra("pending_result", pendingResult);
         startService(intent);
+
     }
 
     public void resetSliders(View view) {

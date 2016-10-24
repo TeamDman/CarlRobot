@@ -17,7 +17,7 @@
         var options = {
             color: "black",
             position: {top: '50%', left: '50%'},
-            mode: "static",                  
+            mode: "static",
         };
         var lastAng = 0;
         var	lastForce = 0;
@@ -79,6 +79,11 @@
 			$(".nipple *").css("background",color);
 		}
 
+		function killall() {
+			$(".nipple").remove();
+			createJoystick();
+		}
+
 		function bindJoystick() {
             joystick.on("move", function(a,b) {
             	document.getElementById("debug").style.display="none"
@@ -127,6 +132,10 @@
                 lastAng=-360;
                 lastSent="";
                 sendInfo(getPins(0,0)+"&b=255",true);
+                // manager.get(1).destroy();
+                // joystick.destroy();
+                // createJoystick();
+                killall();
             });
         }
 

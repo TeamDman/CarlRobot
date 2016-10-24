@@ -78,16 +78,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, RobotListActivity.class));
     }
 
+    public void showPiano(View view) {
+        startActivity(new Intent(this,PianoActivity.class));
+    }
+
     public void restartRobot(View view) {
-        PendingIntent pendingResult = createPendingResult(0, new Intent(), 0);
-        Intent intent = new Intent(getApplicationContext(), SendIntentService.class);
-        intent.putExtra("url", "?restart=1");
-        intent.putExtra("pending_result", pendingResult);
-        startService(intent);
+        sendToRobot("?restart=1");
     }
 
     public void updateTitle() {
         getSupportActionBar().setTitle("Connected to " + manager.getConnectionInfo().getSSID());
+    }
+
+    public void sendToRobot(String toSend) {
+        PendingIntent pendingResult = createPendingResult(0, new Intent(), 0);
+        Intent intent = new Intent(getApplicationContext(), SendIntentService.class);
+        intent.putExtra("url", toSend);
+        intent.putExtra("pending_result", pendingResult);
+        startService(intent);
     }
 
 }

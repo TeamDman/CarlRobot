@@ -95,6 +95,16 @@
         android:layout_above="@+id/text_author"
         android:layout_alignParentEnd="true" />
 
+    <Button
+        android:id="@+id/button_piano"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="true"
+        android:onClick="showPiano"
+        android:text="Open Piano"
+        android:layout_below="@+id/button_robotlist"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>
 

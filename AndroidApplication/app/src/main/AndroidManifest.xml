@@ -24,6 +24,7 @@
         <activity android:name=".ControllerActivity"/>
         <activity android:name=".ActionActivity"/>
         <activity android:name=".RobotListActivity"/>
+        <activity android:name=".PianoActivity"/>
 
     </application>
 
