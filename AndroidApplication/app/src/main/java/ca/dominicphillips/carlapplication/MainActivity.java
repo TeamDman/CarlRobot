@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Connected to " + ssid, Toast.LENGTH_SHORT).show();
             }
         }, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
+
+
     }
 
     public void showController(View view) {
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateTitle() {
-        getSupportActionBar().setTitle("Connected to " + manager.getConnectionInfo().getSSID());
+        getSupportActionBar().setTitle("Connected to " + manager.getConnectionInfo().getSSID().replace("CarlRobot ",""));
     }
 
     public void sendToRobot(String toSend) {
