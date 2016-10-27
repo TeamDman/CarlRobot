@@ -61,7 +61,7 @@ const int motor_BPinB = 3;
 const int tone_Pin=13;
 // NOTE: Motor max output 255
 
-const char* esp_SSID = "CarlRobot Rho";
+const char* esp_SSID = "CarlRobot Gamma";
 const char* esp_PASS = "CarlRobot";
 const bool 	esp_HOTSPOT = true; // Enable to connect to an existing network, see below
 // You can have the ESP connect to your wifi network by replacing the OCSB and wireless4all found in the setup
@@ -181,24 +181,13 @@ void loop() {
 		int nright=0;
 		int aleft=0;
 		int aright=0;
-		if (left==0&&right==0) {
-			// aleft=255;
-			// aright=255;
-			aleft=pleft;
-			aright=pright;
-		} else if (left==1&&right==1) {
-			aright=pright;
-			pright=255;
-		} else if (left==0) {
-			aleft=255;
-			pleft=aleft;
-			pright=0;
-			// nleft=180;
-		} else if (right==0) {
+		if (left==right) {
 			aright=255;
-			pright=aright;
-			pleft=0;
-			// nright=180;
+			pright=255;
+		} else if (right==0 && left==1) {
+			aright=200;
+		} else if (right==1 && left==0) {
+			aleft=200;
 		}
 		motor_SetOutputs(nleft,aleft,nright,aright );
 	}

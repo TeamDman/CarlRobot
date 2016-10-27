@@ -81,7 +81,11 @@ public class RobotListActivity extends Activity {
 
     @Override
     protected void onStop() {
-        unregisterReceiver(mWifiScanReceiver);
+       try {
+           unregisterReceiver(mWifiScanReceiver);
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
         super.onStop();
     }
 
