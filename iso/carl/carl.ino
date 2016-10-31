@@ -167,7 +167,7 @@ void setup() {
 
 
 int pleft=0;
-int pright=0;
+int pright=1;
 void loop() {
 	loopIter++;
 	server.handleClient();
@@ -177,18 +177,56 @@ void loop() {
 		sx1509.writePin(10,HIGH);
 		int right = sx1509.readPin(12);  // read line sensor 1 (s4)
 		int left = sx1509.readPin(14);  // read line sensor 3 (s3)
+		// int nleft=0;
+		// int nright=0;
+		// int aleft=pleft*255;
+		// int aright=pright*255;
+		// if (pleft==1 && left==1) {
+		// 	pleft=0;
+		// 	pright=1;
+		// 	aright=255;
+		// } else if (pright==1 && right==1) {
+		// 	pright=0;
+		// 	pleft=1;
+		// 	aleft=255;
+		// }
 		int nleft=0;
 		int nright=0;
 		int aleft=0;
 		int aright=0;
-		if (left==right) {
-			aright=255;
+		if (left==0&&right==0) {
+			// aleft=255;
+			// aright=255;
+			aleft=pleft;
+			aright=pright;
+		} else if (left==1&&right==1) {
+			aright=pright;
 			pright=255;
-		} else if (right==0 && left==1) {
-			aright=200;
-		} else if (right==1 && left==0) {
-			aleft=200;
+		} else if (left==0) {
+			aleft=255;
+			pleft=aleft;
+			pright=0;
+			// nleft=180;
+		} else if (right==0) {
+			aright=255;
+			pright=aright;
+			pleft=0;
+			// nright=180;
 		}
+		motor_SetOutputs(nleft,aleft,nright,aright );
+		Serial.print(pleft);
+		Serial.print(" ");
+		Serial.print(pright);
+		Serial.print(" ");
+		Serial.print(left);
+		Serial.print(" ");
+		Serial.print(right);
+		Serial.print(" ");
+		Serial.print(aleft);
+		Serial.print(" ");
+		Serial.print(aright);
+
+		Serial.println(" ");
 		motor_SetOutputs(nleft,aleft,nright,aright );
 	}
 }
