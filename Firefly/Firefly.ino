@@ -5,6 +5,7 @@
 //  HT1632.drawTextFF(disp, OUT_SIZE - i, 2, FONT_8X4, FONT_8X4_END, FONT_8X4_HEIGHT); - works same as prev version but is rotated and remapped
 
 #include "pins.h"
+#include "domimg.h"
 
 #include <HT1632.h>
 #include <font_8x4.h>
@@ -151,11 +152,13 @@ void loop () {
     HT1632.setPixelFF (random(16), random(12));
     HT1632.clearPixelFF (random(16), random(12));
     HT1632.clearPixelFF (random(16), random(12));
-    delay(5);
+    //delay(5);
   }
   else if ( displayMode == displayImage ) {
     HT1632.clear();
-    HT1632.drawImageFF(IMG_HEART, IMG_HEART_WIDTH,  IMG_HEART_HEIGHT, 16 - i, 2);
+    //HT1632.drawImageFF(IMG_HEART, IMG_HEART_WIDTH,  IMG_HEART_HEIGHT, 16 - i, 2);
+    // HT1632.drawImageFF(IMG_CHECK, IMG_CHECK_WIDTH,  IMG_CHECK_HEIGHT, 16 - i, 2);
+    HT1632.drawImageFF(IMG_BLOCK, IMG_BLOCK_WIDTH,  IMG_BLOCK_HEIGHT, 16 - i, 2);
   }
   else if ( displayMode == displayText ) {
     HT1632.clear();
