@@ -6,6 +6,14 @@
 #define MOTORPIN2B A3 //motor 2 pin B
 #define TRIGPIN 6 //ultrasonic trigger pin
 #define ECHOPIN 7 //ultrasonic echo pin
+#define RECHOPIN 10
+#define RTRIGPIN 9
+
+#define TURNLEFT motor_SetOutputs(255,0,0,255);
+#define TURNRIGHT motor_SetOutputs(0,255,255,0);
+#define FORWARD motor_SetOutputs(0,255,0,255);
+#define GETULTRA getUltrasonic(&distance, &distside)
+//1 second +/-255 both wheels = 180 spin
 
 unsigned long int loopIter=0;
 
@@ -15,7 +23,9 @@ void setup() {
 	pinMode(LINEPIN1, INPUT);
 	pinMode(LINEPIN2, INPUT);
 	pinMode(ECHOPIN, INPUT); 
+	pinMode(RECHOPIN, INPUT); 
 	pinMode(TRIGPIN, OUTPUT);
+	pinMode(RTRIGPIN, OUTPUT);
 }
 
 
@@ -23,35 +33,69 @@ int pleft=0;
 int pright=1;
 void loop() {
 	
-	//checkLines();
+	checkLines();
 	checkUltrasonic();
 }
 
-int getUltrasonic() {
-	long duration, cm;
+bool getUltrasonic(int* dir, int* dirleft) {
+	// assert(dir);
+	// assert(dirleft);
+
 	digitalWrite(TRIGPIN, LOW);
 	delayMicroseconds(2);
 	digitalWrite(TRIGPIN, HIGH);
 	delayMicroseconds(10);
 	digitalWrite(TRIGPIN, LOW);
-	duration = pulseIn(ECHOPIN, HIGH); //duration is now a value in milliseconds of how long it took for a sound wave to exit the sensor, and bounce off of an object back into the sensor
-	cm = duration / 34 / 2; //using the speed of sound, we find distance from object infront of us. look up "basic kinematics : finding distance using velocity and time"
-	int distance = (int)cm;
-	return distance;
+	*dir = (int)pulseIn(ECHOPIN, HIGH) / 34 / 2; //using the speed of sound, we find distance from object infront of us. look up "basic kinematics : finding distance using velocity and time"
+	digitalWrite(RTRIGPIN, LOW);
+	delayMicroseconds(2);
+	digitalWrite(RTRIGPIN, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(RTRIGPIN, LOW);
+	*dirleft = (int)pulseIn(RECHOPIN, HIGH) / 34 / 2; //duration is now a value in milliseconds of how long it took for a sound wave to exit the sensor, and bounce off of an object back into the sensor
+	return true;
 }
 
 void checkUltrasonic() { //check distance infront of ultrasonic sensor
-	int distance = getUltrasonic();
+	int distance, distside;
+	GETULTRA;
 	Serial.print("DIST ");
-	Serial.println(distance);
-	//Distances over 16 are irrelevant
-	if (distance<10) {
-		Serial.print("odear");
-		motor_SetOutputs(500,0,0,500);
-		delay(750);
-	} else {
-		motor_SetOutputs(0,500,0,500);
+	Serial.print(distance);
+	Serial.print(" ");
+	Serial.println(distside);
+	if (distance < 10 && distance > 0) {
+		do {
+			TURNLEFT
+			delay(100);
+		} while (GETULTRA && (distside < 1 || distside > 19 ));
+		do {
+			FORWARD
+			delay(100);
+		} while (GETULTRA && distside < 20 && distside > 0);
+		delay(300);
+		do {
+			// TURNRIGHT
+			motor_SetOutputs(0,255,0,0);
+			delay(100);
+		} while (GETULTRA && (distside < 1 || distside > 19 ));
+		do {
+			FORWARD
+			delay(100);
+		} while (GETULTRA && distside < 20 && distside > 0);
+		do {
+			motor_SetOutputs(0,255,0,0);
+			delay(100);
+		} while (GETULTRA && (distside < 1 || distside > 19 ));
+		do {
+			FORWARD
+			delay(50);
+		} while (!(digitalRead(LINEPIN1) || digitalRead(LINEPIN2)));
+		motor_SetOutputs(0,0,0,0);
+		delay(2000);
+		pright=255;
+		pleft=0;
 	}
+
 }
 
 void checkLines() {
