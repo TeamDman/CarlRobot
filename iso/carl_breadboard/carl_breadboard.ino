@@ -35,6 +35,7 @@ void loop() {
 	
 	checkLines();
 	checkUltrasonic();
+	// motor_SetOutputs(0,130,0,130);
 }
 
 bool getUltrasonic(int* dir, int* dirleft) {
@@ -74,9 +75,10 @@ void checkUltrasonic() { //check distance infront of ultrasonic sensor
 		} while (GETULTRA && distside < 20 && distside > 0);
 		delay(300);
 		do {
-			// TURNRIGHT
 			motor_SetOutputs(0,255,0,0);
 			delay(100);
+			FORWARD
+			delay(25);
 		} while (GETULTRA && (distside < 1 || distside > 19 ));
 		do {
 			FORWARD
@@ -85,6 +87,8 @@ void checkUltrasonic() { //check distance infront of ultrasonic sensor
 		do {
 			motor_SetOutputs(0,255,0,0);
 			delay(100);
+			FORWARD
+			delay(75);
 		} while (GETULTRA && (distside < 1 || distside > 19 ));
 		do {
 			FORWARD
@@ -120,7 +124,6 @@ void checkLines() {
 		pright=aright;
 		pleft=0;
 	}
-	motor_SetOutputs(nleft,aleft,nright,aright );
 	// Serial.print(pleft);
 	// Serial.print(" ");
 	// Serial.print(pright);
