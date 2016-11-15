@@ -86,16 +86,18 @@ void checkUltrasonic() { //check distance infront of ultrasonic sensor
 		} while (GETULTRA && distside < 20 && distside > 0);
 		do {
 			motor_SetOutputs(0,255,0,0);
-			delay(100);
+			delay(75);
 			FORWARD
 			delay(75);
 		} while (GETULTRA && (distside < 1 || distside > 19 ));
 		do {
+			motor_SetOutputs(0,255,0,0);
+			delay(100);
 			FORWARD
-			delay(50);
+			delay(75);
 		} while (!(digitalRead(LINEPIN1) || digitalRead(LINEPIN2)));
 		motor_SetOutputs(0,0,0,0);
-		delay(2000);
+		// delay(2000);
 		pright=255;
 		pleft=0;
 	}
