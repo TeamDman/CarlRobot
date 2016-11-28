@@ -12,9 +12,16 @@
 #include <images.h>
 
 #include <HardWire.h>
-HardWire HWire(1, I2C_FAST_MODE); // I2c1
 
+
+HardWire HWire(1, I2C_FAST_MODE); // I2c1
 uint8_t accData[64];
+
+bool blockGameData[6][12];
+bool blockGamePaddle[6];
+uint16_t blockGameHeight=3;
+uint8_t blockGamePosition=0;
+
 
 int i = 13; // start in middle
 uint8_t wdImage;
@@ -26,7 +33,7 @@ int16_t scollDelay = 0;
 
 enum machineStates { idle, buttonPhysicalInput, buttonLeftInput, buttonRightInput, busy, sleeping } machineState;
 enum scrollModes { scrollStop, scrollLeft, scrollRight } scrollMode;
-enum displayModes { displayImage, displayText, displaySparkle } displayMode;
+enum displayModes { displayImage, displayText, displaySparkle, displayBlockGame } displayMode;
 
 void buttonPhysical(void) {
   machineState = buttonPhysicalInput;
@@ -44,7 +51,6 @@ void setup () {
 
   Serial.begin(115200);
   HT1632.begin(CS, SCK, MOSI);
-
   HWire.begin();
 
   pinMode (pushButton, INPUT_PULLUP);
@@ -94,13 +100,44 @@ void readi2c (void) {
 
 
 void loop () {
-
-
-
-
-
- 
-
+  if (displayMode==displayBlockGame) {
+    delay(200);
+    HT1632.clear();
+    if (scrollMode == scrollRight) {
+      blockGamePosition++;
+    } else if (scrollMode == scrollLeft) {
+      blockGamePosition--;
+    } else {
+      scrollMode=scrollRight;
+      blockGamePosition=0;
+    }
+    if (blockGamePosition > 5){
+      scrollMode=scrollLeft;
+    } else if (blockGamePosition < 1){
+      scrollMode=scrollRight;
+    }
+    if (machineState == buttonLeftInput || machineState==buttonRightInput) {
+      for (int x=0;x<6;x++) {
+        if (blockGamePaddle[x]) {
+          blockGamePaddle[x]=blockGamePosition+x<3?false:blockGamePosition+x>8?false:blockGameData[x][blockGameHeight-1];
+          blockGameData[x][blockGameHeight]=blockGamePaddle[x];
+        }
+      }
+      blockGameHeight++; 
+      machineState=idle;
+    }
+    for (int x=0;x<6;x++) {
+      for (int y=0;y<12;y++) {
+        if (blockGameData[x][y]){ 
+          HT1632.setPixelFF(5+x,y);
+        }
+      }
+      if (blockGamePaddle[x]){
+        HT1632.setPixelFF(2+x+blockGamePosition,blockGameHeight);
+      }
+    }
+    HT1632.render();
+  }
 
   if (machineState == buttonLeftInput) {
     Serial.println("\nbutton left\n");
@@ -122,14 +159,20 @@ void loop () {
     Serial.println(scollDelay);
   }
 
-
-
-
   if (machineState == buttonPhysicalInput) {
     Serial.println("\nbutton physical\n");
     
     if ( displayMode == displayImage ) {
-      displayMode = displaySparkle ;
+      displayMode = displayBlockGame ;
+      blockGamePosition=0;
+      blockGameHeight=3;
+      scrollMode=scrollRight;
+      for (int x=0;x<6;x++) {
+        for (int y=0;y<12;y++) {
+          blockGameData[x][y]=y<3;
+        }
+        blockGamePaddle[x]=true;
+      }
       wd = wdText;
     }
     else if ( displayMode == displayText ) {
@@ -138,6 +181,8 @@ void loop () {
     }
     else if ( displayMode == displaySparkle  ) {
       displayMode = displayText ;
+    } else if (displayMode == displayBlockGame ) {
+      displayMode = displaySparkle;
     }
 
 
@@ -167,36 +212,37 @@ void loop () {
   HT1632.render(); // This updates the display on the screen.
 
 
-  if ( scollDelay < 0 ) {
-    scrollMode = scrollLeft;
-  }
-  else if ( scollDelay > 0 ) {
-    scrollMode = scrollRight;
-  }
-  else if ( scollDelay == 0 ) {
-    scrollMode = scrollStop;
-  }
-
-
-  if ( displayMode != displaySparkle) {
-    delay(215 - abs(scollDelay)); // top speed is delay 15
-  }
-  if (scrollMode == scrollLeft) {
-    if (i == 0) {
-      i = wd + 16;
+  if (displayMode != displayBlockGame) { 
+    if ( scollDelay < 0 ) {
+      scrollMode = scrollLeft;
     }
-    i--;
-  }
-  else if  (scrollMode == scrollRight) {
-    if ( i == 16 + wd ) {
-      i = 0;
+    else if ( scollDelay > 0 ) {
+      scrollMode = scrollRight;
     }
-    i++; // = (i+1)%(wd + OUT_SIZE);
-  }
-  else {
-    ;  // stop
-  }
+    else if ( scollDelay == 0 ) {
+      scrollMode = scrollStop;
+    }
 
+    if ( displayMode != displaySparkle) {
+      delay(215 - abs(scollDelay)); // top speed is delay 15
+    }
+
+    if (scrollMode == scrollLeft) {
+      if (i == 0) {
+        i = wd + 16;
+      }
+      i--;
+    }
+    else if  (scrollMode == scrollRight) {
+      if ( i == 16 + wd ) {
+        i = 0;
+      }
+      i++; // = (i+1)%(wd + OUT_SIZE);
+    }
+    else {
+      ;  // stop
+    }
+  }
 
 
 }
