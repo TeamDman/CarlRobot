@@ -18,7 +18,7 @@ HardWire HWire(1, I2C_FAST_MODE); // I2c1
 uint8_t accData[64];
 
 bool blockGameData[6][12];
-bool blockGamePaddle[6];
+uint8_t blockGamePaddle=6;
 uint16_t blockGameHeight=3;
 uint8_t blockGamePosition=0;
 
@@ -97,46 +97,67 @@ void readi2c (void) {
   }
 }
   
-
+void blockGameReset() {
+  displayMode = displayBlockGame ;
+  blockGamePosition=0;
+  blockGameHeight=3;
+  blockGamePaddle=6;
+  scrollMode=scrollRight;
+  for (int x=0;x<6;x++) {
+    for (int y=0;y<12;y++) {
+      blockGameData[x][y]=y<3;
+    }
+  }         
+}
 
 void loop () {
   if (displayMode==displayBlockGame) {
-    delay(200);
-    HT1632.clear();
-    if (scrollMode == scrollRight) {
-      blockGamePosition++;
-    } else if (scrollMode == scrollLeft) {
-      blockGamePosition--;
-    } else {
-      scrollMode=scrollRight;
-      blockGamePosition=0;
-    }
-    if (blockGamePosition > 5){
+    delay(200 - blockGameHeight*17);
+    if (blockGamePosition > 11 - blockGamePaddle){
       scrollMode=scrollLeft;
     } else if (blockGamePosition < 1){
       scrollMode=scrollRight;
     }
     if (machineState == buttonLeftInput || machineState==buttonRightInput) {
-      for (int x=0;x<6;x++) {
-        if (blockGamePaddle[x]) {
-          blockGamePaddle[x]=blockGamePosition+x<3?false:blockGamePosition+x>8?false:blockGameData[x][blockGameHeight-1];
-          blockGameData[x][blockGameHeight]=blockGamePaddle[x];
+      uint8_t newPaddle = blockGamePaddle;
+      for (int x=0;x<blockGamePaddle;x++) {
+        if (x+blockGamePosition-3<0 || x+blockGamePosition-3>5 || !blockGameData[x+blockGamePosition-3][blockGameHeight-1]) {
+          newPaddle--;
+        } else {
+          blockGameData[x+blockGamePosition-3][blockGameHeight]=true;
         }
       }
+      blockGamePaddle=newPaddle;
       blockGameHeight++; 
       machineState=idle;
     }
-    for (int x=0;x<6;x++) {
-      for (int y=0;y<12;y++) {
-        if (blockGameData[x][y]){ 
-          HT1632.setPixelFF(5+x,y);
+    HT1632.clear();
+    if (blockGamePaddle<=0 || blockGameHeight >= 12) {
+      bool win = blockGamePaddle > 0;
+      for (int scroll=0;scroll<(win?48:42); scroll++) {
+        HT1632.clear();
+        HT1632.drawTextFF(win?"WINNER":"LOSER",16-scroll, 2, FONT_8X4, FONT_8X4_END, FONT_8X4_HEIGHT);
+        HT1632.render();
+        delay(100);
+      }
+      blockGameReset();
+    } else {
+      for (int x=0;x<6;x++) {
+        for (int y=0;y<12;y++) {
+          if (blockGameData[x][y]){ 
+            HT1632.setPixelFF(5+x,y);
+          }
+        }
+        if (x<blockGamePaddle){
+          HT1632.setPixelFF(2+x+blockGamePosition,blockGameHeight);
         }
       }
-      if (blockGamePaddle[x]){
-        HT1632.setPixelFF(2+x+blockGamePosition,blockGameHeight);
+      if (scrollMode == scrollRight) {
+        blockGamePosition++;
+      } else if (scrollMode == scrollLeft) {
+        blockGamePosition--;
       }
     }
-    HT1632.render();
   }
 
   if (machineState == buttonLeftInput) {
@@ -163,16 +184,7 @@ void loop () {
     Serial.println("\nbutton physical\n");
     
     if ( displayMode == displayImage ) {
-      displayMode = displayBlockGame ;
-      blockGamePosition=0;
-      blockGameHeight=3;
-      scrollMode=scrollRight;
-      for (int x=0;x<6;x++) {
-        for (int y=0;y<12;y++) {
-          blockGameData[x][y]=y<3;
-        }
-        blockGamePaddle[x]=true;
-      }
+      blockGameReset();
       wd = wdText;
     }
     else if ( displayMode == displayText ) {
