@@ -9,13 +9,16 @@
 #define RECHOPIN 10
 #define RTRIGPIN 9
 
-#define TURNLEFT motor_SetOutputs(255,0,0,255);
-#define TURNRIGHT motor_SetOutputs(0,255,255,0);
-#define FORWARD motor_SetOutputs(0,255,0,255);
+#define SPEED 255
+
+#define TURNLEFT motor_SetOutputs(SPEED,0,0,SPEED);
+#define TURNRIGHT motor_SetOutputs(0,SPEED,SPEED,0);
+#define FORWARD motor_SetOutputs(0,SPEED,0,SPEED);
 #define GETULTRA getUltrasonic(&distance, &distside)
-//1 second +/-255 both wheels = 180 spin
+//1 second +/-SPEED both wheels = 180 spin
 
 unsigned long int loopIter=0;
+bool doBoxAvoidance = false;
 
 void setup() {
 	Serial.begin(57600); 
@@ -34,7 +37,9 @@ int pright=1;
 void loop() {
 	
 	checkLines();
-	checkUltrasonic();
+	if (doBoxAvoidance) {	
+		checkUltrasonic();
+	}
 	// motor_SetOutputs(0,130,0,130);
 }
 
@@ -75,7 +80,7 @@ void checkUltrasonic() { //check distance infront of ultrasonic sensor
 		} while (GETULTRA && distside < 20 && distside > 0);
 		delay(300);
 		do {
-			motor_SetOutputs(0,255,0,0);
+			motor_SetOutputs(0,SPEED,0,0);
 			delay(100);
 			FORWARD
 			delay(25);
@@ -85,20 +90,20 @@ void checkUltrasonic() { //check distance infront of ultrasonic sensor
 			delay(100);
 		} while (GETULTRA && distside < 20 && distside > 0);
 		do {
-			motor_SetOutputs(0,255,0,0);
+			motor_SetOutputs(0,SPEED,0,0);
 			delay(75);
 			FORWARD
 			delay(75);
 		} while (GETULTRA && (distside < 1 || distside > 19 ));
 		do {
-			motor_SetOutputs(0,255,0,0);
+			motor_SetOutputs(0,SPEED,0,0);
 			delay(100);
 			FORWARD
 			delay(75);
 		} while (!(digitalRead(LINEPIN1) || digitalRead(LINEPIN2)));
 		motor_SetOutputs(0,0,0,0);
 		// delay(2000);
-		pright=255;
+		pright=SPEED;
 		pleft=0;
 	}
 
@@ -116,13 +121,13 @@ void checkLines() {
 		aright=pright;
 	} else if (left==1&&right==1) {
 		aright=pright;
-		pright=255;
+		pright=SPEED;
 	} else if (left==0) {
-		aleft=255;
+		aleft=SPEED;
 		pleft=aleft;
 		pright=0;
 	} else if (right==0) {
-		aright=255;
+		aright=SPEED;
 		pright=aright;
 		pleft=0;
 	}
