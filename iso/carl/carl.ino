@@ -60,7 +60,7 @@ const int tone_Pin=13;
 	However, this is not recommended as the personal hotspot for the robot provides a more reliable connection.
 	Using existing networks might provide an easier developing experience as it allows connection via ethernet to the robot given the correct IP address which can be obtained from the arduino serial monitor upon boot
 */
-const char* esp_SSID = "CarlRobot Gamma";
+const char* esp_SSID = "CarlRobot Theta";
 const char* esp_PASS = "CarlRobot";
 const bool 	esp_HOTSPOT = true; 
 

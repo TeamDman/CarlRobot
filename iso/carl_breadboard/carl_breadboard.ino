@@ -9,7 +9,7 @@
 #define RECHOPIN 10
 #define RTRIGPIN 9
 
-#define SPEED 255
+#define SPEED 500
 
 #define TURNLEFT motor_SetOutputs(SPEED,0,0,SPEED);
 #define TURNRIGHT motor_SetOutputs(0,SPEED,SPEED,0);
@@ -18,7 +18,7 @@
 //1 second +/-SPEED both wheels = 180 spin
 
 unsigned long int loopIter=0;
-bool doBoxAvoidance = false;
+bool doBoxAvoidance = true;
 
 void setup() {
 	Serial.begin(57600); 
